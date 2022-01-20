@@ -1,0 +1,24 @@
+[package]
+name = "telem"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1.51"
+bytes = "1.1.0"
+http = "0.2.5"
+opentelemetry = { version = "0.16.0", features = ["rt-tokio", "metrics", "serialize"] }
+opentelemetry-contrib = "0.8.0"
+opentelemetry-otlp = { version = "0.9", features = ["http-proto", "reqwest-client"] }
+opentelemetry-http = { version = "0.5.0", features = ["reqwest"]}
+prost = "0.9"
+# Only necessary if using Protobuf well-known types:
+prost-types = "0.9"
+reqwest = "0.11.7"
+tonic = { version = "0.5.2" }
+tracing = { version = "0.1" }
+tracing-opentelemetry = "0.16.0"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"]}
+tokio = { version = "1.14.0", features = ["full"] }
