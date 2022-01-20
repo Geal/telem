@@ -1159,6 +1159,7 @@ dependencies = [
  "prost 0.9.0",
  "prost-types 0.9.0",
  "reqwest",
+ "thiserror",
  "tokio",
  "tonic",
  "tracing",

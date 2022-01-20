@@ -1,6 +1,6 @@
-use crate::stdout::*;
-use opentelemetry::sdk::export::trace::stdout;
+mod std_exporter;
 use opentelemetry::trace::Tracer;
+use std_exporter::new_pipeline;
 use tracing::{instrument, span};
 
 #[instrument(name = "do nothing", level = "error")]
@@ -14,8 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::fmt().json().init();
 
     loop {
-        let tracer = new_pipeline().with_pretty_print(true).install_simple();
-
+        let tracer = new_pipeline().with_pretty_print(true).install_batch();
         let root = span!(tracing::Level::INFO, "app_start", work_units = 2);
         let _entry = root.enter();
 

@@ -27,16 +27,17 @@
 //!     shutdown_tracer_provider(); // sending remaining spans
 //! }
 //! ```
+use async_trait::async_trait;
 use opentelemetry::{
-    global, sdk,
+    global,
     runtime::Tokio,
+    sdk,
     sdk::export::{
         trace::{ExportResult, SpanData, SpanExporter},
         ExportError,
     },
     trace::TracerProvider,
 };
-use async_trait::async_trait;
 use std::fmt::Debug;
 use std::io::{stdout, Stdout, Write};
 
@@ -97,6 +98,20 @@ where
 
         let mut provider_builder =
             sdk::trace::TracerProvider::builder().with_simple_exporter(exporter);
+        if let Some(config) = self.trace_config.take() {
+            provider_builder = provider_builder.with_config(config);
+        }
+        let provider = provider_builder.build();
+        let tracer = provider.tracer("opentelemetry", Some(env!("CARGO_PKG_VERSION")));
+        let _ = global::set_tracer_provider(provider);
+
+        tracer
+    }
+
+    /// Install the stdout exporter pipeline with the recommended defaults.
+    pub fn install_batch(mut self) -> sdk::trace::Tracer {
+        let exporter = Exporter::new(self.writer, self.pretty_print);
+
         let mut provider_builder =
             sdk::trace::TracerProvider::builder().with_batch_exporter(exporter, Tokio);
         if let Some(config) = self.trace_config.take() {
